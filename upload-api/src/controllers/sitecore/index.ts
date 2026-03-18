@@ -5,6 +5,11 @@ import path from 'path';
 import { deleteFolderSync } from '../../helper';
 import logger from '../../utils/logger';
 import { HTTP_CODES, HTTP_TEXTS, MIGRATION_DATA_CONFIG } from '../../constants';
+import {
+  createSitecoreSerializationMapper,
+  extractSerializationLocales,
+  isSitecoreSerializationFolder,
+} from '../../services/sitecoreSerialization';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const {
@@ -133,6 +138,29 @@ const createSitecoreMapper = async (
   config: object
 ) => {
   try {
+    if (isSitecoreSerializationFolder(filePath)) {
+      const localeData = extractSerializationLocales(filePath);
+      await createLocaleSource?.({ app_token, localeData, projectId });
+
+      const fieldMapping = createSitecoreSerializationMapper(
+        filePath,
+        String(affix || 'cs')
+      );
+
+      await sendRequestWithRetry({
+        payload: fieldMapping,
+        projectId,
+        app_token,
+      });
+
+      logger.info('Validation success:', {
+        status: HTTP_CODES?.OK,
+        message: HTTP_TEXTS?.MAPPER_SAVED,
+      });
+
+      return;
+    }
+
     const newPath = path.join(filePath, 'items');
     await ExtractFiles(newPath);
     const localeData = await extractLocales(

@@ -14,6 +14,16 @@ import AuthenticationModel from "../models/authentication.js";
 import logger from "../utils/logger.js";
 // import  * as configHandler  from "@contentstack/cli-utilities";
 
+const getMostRecentlyUpdatedUser = () => {
+  const users = AuthenticationModel?.data?.users ?? [];
+
+  return [...users].sort((left, right) => {
+    const leftTime = new Date(left?.updated_at ?? left?.created_at ?? 0).getTime();
+    const rightTime = new Date(right?.updated_at ?? right?.created_at ?? 0).getTime();
+    return rightTime - leftTime;
+  })[0];
+};
+
 /**
  * Logs in a user with the provided request data.
  *
@@ -187,7 +197,46 @@ const requestSms = async (req: Request): Promise<LoginServiceType> => {
   }
 };
 
+const getSavedSession = async (): Promise<LoginServiceType> => {
+  const srcFun = "getSavedSession";
+
+  try {
+    await AuthenticationModel.read();
+
+    const savedUser = getMostRecentlyUpdatedUser();
+
+    if (!savedUser?.user_id || !savedUser?.region || !savedUser?.authtoken) {
+      throw new BadRequestError(HTTP_TEXTS.NO_CS_USER);
+    }
+
+    const app_token = generateToken({
+      region: savedUser.region,
+      user_id: savedUser.user_id,
+    });
+
+    return {
+      data: {
+        message: HTTP_TEXTS.SUCCESS_LOGIN,
+        app_token,
+        user: {
+          email: savedUser.email,
+          region: savedUser.region,
+          user_id: savedUser.user_id,
+        },
+      },
+      status: HTTP_CODES.OK,
+    };
+  } catch (error: any) {
+    logger.error(getLogMessage(srcFun, "Error while restoring saved session", {}, error));
+    throw new ExceptionFunction(
+      error?.message || HTTP_TEXTS.INTERNAL_ERROR,
+      error?.statusCode || error?.status || HTTP_CODES.SERVER_ERROR
+    );
+  }
+};
+
 export const authService = {
   login,
   requestSms,
+  getSavedSession,
 };

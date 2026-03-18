@@ -1,7 +1,7 @@
 import { AUTH_ROUTES } from '../../utilities/constants';
 import { User, SmsToken } from '../../pages/Login/login.interface';
 
-import { postCall } from './service';
+import { getCall, postCall } from './service';
 
 export const userSession = (data: User) => {
   try {
@@ -23,6 +23,18 @@ export const requestSMSToken = (data: SmsToken) => {
       throw new Error(`Error in requestSMSToken: ${error.message}`);
     } else {
       throw new Error('Unknown error in requestSMSToken');
+    }
+  }
+};
+
+export const getSavedSession = () => {
+  try {
+    return getCall(`${AUTH_ROUTES}/saved-session`);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error in getSavedSession: ${error.message}`);
+    } else {
+      throw new Error('Unknown error in getSavedSession');
     }
   }
 };

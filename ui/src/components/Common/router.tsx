@@ -10,6 +10,7 @@ import ErrorPage from '../../pages/Errors';
 
 // Component
 import PrivateRoute from './private-route';
+import SavedSessionBootstrap from '../SavedSessionBootstrap';
 
 /******** ALL LAZY LOADING ********/
 const HomeLazyLoad = lazy(() => import('../../pages/Home'));
@@ -25,26 +26,29 @@ const SettingsLazyLoad = lazy(() => import('../Common/Settings'));
  */
 const AppRouter = () => {
   return (
-    <Routes>
-      {/* ALL PUBLIC ROUTES HERE */}
-      <Route path="/" element={<HomeLazyLoad />} />
-      <Route path="/region-login" element={<RegionalLoginLazyLoad />} />
-      <Route path="/login" element={<LoginLazyLoad />} />
+    <>
+      <SavedSessionBootstrap />
+      <Routes>
+        {/* ALL PUBLIC ROUTES HERE */}
+        <Route path="/" element={<HomeLazyLoad />} />
+        <Route path="/region-login" element={<RegionalLoginLazyLoad />} />
+        <Route path="/login" element={<LoginLazyLoad />} />
 
-      {/* ALL PROTECTED ROUTES HERE */}
-      <Route element={<PrivateRoute redirectTo="/" />}>
-        <Route path="/projects" element={<ProjectsLazyLoad />} />
+        {/* ALL PROTECTED ROUTES HERE */}
+        <Route element={<PrivateRoute redirectTo="/" />}>
+          <Route path="/projects" element={<ProjectsLazyLoad />} />
 
-        <Route
-          path="/projects/:projectId/migration/steps/:stepId"
-          element={<MigrationLazyLoad />}
-        />
+          <Route
+            path="/projects/:projectId/migration/steps/:stepId"
+            element={<MigrationLazyLoad />}
+          />
 
-        <Route path="/projects/:projectId/settings" element={<SettingsLazyLoad />} />
-      </Route>
+          <Route path="/projects/:projectId/settings" element={<SettingsLazyLoad />} />
+        </Route>
 
-      <Route path="*" element={<ErrorPage contentType={CS_ENTRIES.NOT_FOUND_ERROR} />} />
-    </Routes>
+        <Route path="*" element={<ErrorPage contentType={CS_ENTRIES.NOT_FOUND_ERROR} />} />
+      </Routes>
+    </>
   );
 };
 

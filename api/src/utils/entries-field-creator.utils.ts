@@ -304,7 +304,8 @@ export const entriesFieldCreator = async ({
       const globalFieldsSchema = contentTypes?.find?.(
         (gfd: any) =>
           gfd?.contentstackUid === field?.contentstackFieldUid &&
-          gfd?.type === 'global_field'
+          (gfd?.type === 'global_field' ||
+            (gfd?.type === 'content_type' && gfd?.globalFieldSource))
       );
       if (globalFieldsSchema?.fieldMapping) {
         const mainSchema = [];

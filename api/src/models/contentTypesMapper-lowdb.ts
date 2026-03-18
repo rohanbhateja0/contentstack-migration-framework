@@ -60,6 +60,11 @@ export interface ContentTypesMapper {
    * The type of the content type.
    */
   type: string;
+
+  /**
+   * Indicates this content type should also be emitted as a global field.
+   */
+  globalFieldSource?: boolean;
 }
 
 // interface ContentTypesMapper {

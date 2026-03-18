@@ -40,4 +40,9 @@ router.post(
   asyncRouter(authController.RequestSms)
 );
 
+router.get(
+  "/saved-session",
+  asyncRouter(authController.getSavedSession)
+);
+
 export default router;

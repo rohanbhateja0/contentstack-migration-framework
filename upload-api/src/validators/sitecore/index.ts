@@ -1,16 +1,24 @@
 /*
 sitecore Validator
  */
+const {
+  isSitecoreSerializationFolder,
+} = require('../../services/sitecoreSerialization');
+
 interface items {
   files: { [key: string]: any };
 }
 
 interface props {
-  data: items;
+  data: items | string;
 }
 
 async function sitecoreValidator({ data }: props) {
   try {
+    if (typeof data === 'string') {
+      return isSitecoreSerializationFolder(data);
+    }
+
     const sitecoreFolders = ['installer', 'items', 'metadata', 'properties'];
     const foundFolders = new Set<string>();
     let hasNestedZip = false;

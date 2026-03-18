@@ -1094,6 +1094,13 @@ export const contenTypeMaker = async ({ contentType, destinationStackId, project
       const message = getLogMessage(srcFunc, `ContentType ${ct?.uid} has been successfully Transformed.`, {});
       await customLogger(projectId, destinationStackId, 'info', message);
       await saveContent(ct, contentSave);
+
+      if (contentType?.globalFieldSource) {
+        const globalSave = path.join(MIGRATION_DATA_CONFIG.DATA, destinationStackId, GLOBAL_FIELDS_DIR_NAME);
+        const globalMessage = getLogMessage(srcFunc, `Global Field ${ct?.uid} has been successfully Transformed.`, {});
+        await customLogger(projectId, destinationStackId, 'info', globalMessage);
+        await writeGlobalField(ct, globalSave);
+      }
     }
   } else {
     console.info(contentType?.contentstackUid, 'missing');

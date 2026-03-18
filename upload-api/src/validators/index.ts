@@ -10,6 +10,10 @@ const validator = ({ data, type, extension }: { data: any; type: string; extensi
       return sitecoreValidator({ data });
     }
 
+    case 'sitecore-folder': {
+      return sitecoreValidator({ data });
+    }
+
     case 'contentful-json': {
       return contentfulValidator(data);
     }

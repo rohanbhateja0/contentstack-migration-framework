@@ -23,7 +23,13 @@ const RequestSms = async (req: Request, res: Response) => {
   res.status(resp.status).json(resp.data);
 };
 
+const getSavedSession = async (_req: Request, res: Response) => {
+  const resp = await authService.getSavedSession();
+  res.status(resp.status).json(resp.data);
+};
+
 export const authController = {
   login,
   RequestSms,
+  getSavedSession,
 };

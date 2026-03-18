@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm --prefix migration-aem run build && tsc",
+    "report:sitecore-sync": "npm run build && node build/reportSitecoreSync.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run build &&tsc && node build/index.js",
     "startNew": "tsc && node build/index.js",
